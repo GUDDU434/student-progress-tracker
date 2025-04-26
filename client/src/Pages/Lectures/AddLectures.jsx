@@ -15,8 +15,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { GetAllJobs } from "../../Redux/jobs/job.action";
-import { initialInputData } from "../../utils/constants";
+import { GetAllLectures } from "../../Redux/lectures/lecture.action";
 import useAxiosPrivate from "../../utils/useAxiosPrivate";
 
 const AddLecture = ({ toggleDrawer, isDrawerOpen }) => {
@@ -25,7 +24,13 @@ const AddLecture = ({ toggleDrawer, isDrawerOpen }) => {
   const dispatch = useDispatch();
 
   // Initial Input Form Data
-  const [newPost, setNewpost] = useState(initialInputData);
+  const [newPost, setNewpost] = useState({
+    lacture_title: "",
+    lacture_date: "",
+    lacture_video_link: "",
+    lacture_material_link: "",
+    track: "",
+  });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -44,20 +49,22 @@ const AddLecture = ({ toggleDrawer, isDrawerOpen }) => {
       ...newPost,
     };
 
-    // Delete unwanted fields
-    delete formData.post_date;
-    delete formData.last_date;
-
     axiosPrivate
-      .post("/api/v1/posts", formData)
+      .post("/api/v1/lectures", formData)
       .then((res) => {
         toast.success("Data saved successfully!");
 
         // Clear the form fields
-        setNewpost(initialInputData);
+        setNewpost({
+          lacture_title: "",
+          lacture_date: "",
+          lacture_video_link: "",
+          lacture_material_link: "",
+          track: "",
+        });
         setLoading(false);
         toggleDrawer(false);
-        dispatch(GetAllJobs());
+        dispatch(GetAllLectures());
       })
       .catch((err) => {
         toast.error(err.response.data.message);

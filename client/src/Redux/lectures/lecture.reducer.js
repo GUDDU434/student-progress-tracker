@@ -1,79 +1,74 @@
 import {
   ACTIVE_TODAY,
   EXPIRE_TODAY,
-  JOBS_FAILURE,
-  JOBS_REQUEST,
-  JOBS_SUCCESS,
-  NEW_JOBS_SUCCESS,
+  Lectures_FAILURE,
+  Lectures_REQUEST,
+  Lectures_SUCCESS,
+  NEW_Lectures_SUCCESS,
   POSTED_TODAY,
-  QUICK_JOBS_SUCCESS,
-  SINGLE_JOBS_SUCCESS,
-} from "./job.action";
+  QUICK_Lectures_SUCCESS,
+  SINGLE_Lectures_SUCCESS,
+} from "./lecture.action";
 
-const initialJobs = {
+const initialLectures = {
   isLoading: false,
   isError: null,
-  AllJobs: { nextUrl: "", posts: [], total: 0 },
-  ExpireToday: { nextUrl: "", posts: [], total: 0 },
-  PostedToday: { nextUrl: "", posts: [], total: 0 },
-  ActivateToday: { nextUrl: "", posts: [], total: 0 },
-  QuickJobs: { nextUrl: "", posts: [], total: 0 },
-  NewJobs: { nextUrl: "", posts: [], total: 0 },
-  jobDetails: {},
+  AllLectures: { nextUrl: "", lectures: [], total: 0 },
+  lectureDetails: {},
 };
 
-export const reducer = (state = initialJobs, { type, payload }) => {
+export const reducer = (state = initialLectures, { type, payload }) => {
   switch (type) {
-    case JOBS_REQUEST:
+    case Lectures_REQUEST:
       return {
         ...state,
         isLoading: true,
         isError: null,
       };
-    case JOBS_SUCCESS:
+    case Lectures_SUCCESS:
       return {
         ...state,
         isLoading: false,
         isError: null,
-        AllJobs: {
-          ...state.AllJobs,
+        AllLectures: {
+          ...state.AllLectures,
+          nextUrl: payload?.nextUrl,
+          lectures: payload?.lectures,
+          total: payload?.total,
+        },
+      };
+    case QUICK_Lectures_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        isError: null,
+        QuickLectures: {
+          ...state.QuickLectures,
           nextUrl: payload?.nextUrl,
           posts: payload?.posts,
           total: payload?.total,
         },
       };
-    case QUICK_JOBS_SUCCESS:
+    case NEW_Lectures_SUCCESS:
       return {
         ...state,
         isLoading: false,
         isError: null,
-        QuickJobs: {
-          ...state.QuickJobs,
+        NewLectures: {
+          ...state.NewLectures,
           nextUrl: payload?.nextUrl,
           posts: payload?.posts,
           total: payload?.total,
         },
       };
-    case NEW_JOBS_SUCCESS:
+    case SINGLE_Lectures_SUCCESS:
       return {
         ...state,
         isLoading: false,
         isError: null,
-        NewJobs: {
-          ...state.NewJobs,
-          nextUrl: payload?.nextUrl,
-          posts: payload?.posts,
-          total: payload?.total,
-        },
+        lectureDetails: payload,
       };
-    case SINGLE_JOBS_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        isError: null,
-        jobDetails: payload,
-      };
-    case JOBS_FAILURE:
+    case Lectures_FAILURE:
       return {
         ...state,
         isLoading: false,

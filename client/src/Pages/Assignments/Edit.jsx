@@ -21,10 +21,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loading from "../../Components/Loader/Loading";
 import {
-  GetAllJobs,
-  GetSingleJob,
-  updateJob,
-} from "../../Redux/jobs/job.action";
+  updateLectures,
+  GetSinglelecture,
+  GetAllLectures,
+} from "../../Redux/lectures/lecture.action";
 import {
   applyMode,
   empty,
@@ -63,7 +63,7 @@ const EditJob = () => {
     (state) => state.JobReducer
   );
   useEffect(() => {
-    dispatch(GetSingleJob(id));
+    dispatch(GetSinglelecture(id));
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -147,12 +147,12 @@ const EditJob = () => {
     if (instruction.trim() !== empty) formData.instruction = instruction;
     if (qualification.trim() !== empty) formData.qualification = qualification;
 
-    dispatch(updateJob(id, formData))
+    dispatch(updateLectures(id, formData))
       .then((res) => {
         if (res === "SUCCESS") {
           toast.success("Data Updated successfully!");
           setLoading(false);
-          dispatch(GetAllJobs());
+          dispatch(GetAllLectures());
         } else {
           toast.error(res);
         }

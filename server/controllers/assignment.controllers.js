@@ -31,7 +31,7 @@ module.exports.GetAllAssignments = async (req, res) => {
 
 module.exports.CreateAssignment = async (req, res) => {
   try {
-    const assignment = new Assignment(req.body);
+    const assignment = new Assignment({ ...req.body, posted_by : req.user._id });
     await assignment.save();
     res.status(201).send({ message: "Assignment created successfully" });
   } catch (err) {

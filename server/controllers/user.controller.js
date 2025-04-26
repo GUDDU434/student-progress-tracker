@@ -50,8 +50,10 @@ module.exports.LoginUser = async (req, res) => {
 
     res.status(200).send({
       message: "User logged in successfully",
-      accessToken: token,
-      refreshToken: refresh_token,
+      data: {
+        accessToken: token,
+        refreshToken: refresh_token,
+      },
     });
   } catch (err) {
     console.log(err);
@@ -95,7 +97,13 @@ module.exports.GetDetails = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
-    res.status(200).send(user);
+    res
+      .status(200)
+      .send({
+        data: user,
+        status: 200,
+        message: "User details fetched successfully",
+      });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

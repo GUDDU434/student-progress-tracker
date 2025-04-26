@@ -38,19 +38,15 @@ const Navbar = ({ onOpen }) => {
   const [editable, setEditable] = useState(false);
   const { profile } = useSelector((state) => state.loginReducer);
 
+  console.log("profile", profile);
+
   useEffect(() => {
     dispatch(getUserDetails());
-    // dispatch(contactUsGetData({ page: 1, limit: 10 }));
   }, [dispatch]);
 
   useEffect(() => {
     setUserDetails(profile);
   }, [profile, user]);
-
-  // const total = data?.data?.reduce(
-  //   (acc, curr) => (!curr.isRead ? acc + 1 : acc),
-  //   0
-  // );
 
   const handleCloseUserModal = () => {
     setUserModal(false);
@@ -164,17 +160,6 @@ const Navbar = ({ onOpen }) => {
               }}
               disabled
             />
-            <TextField
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              label="mobile"
-              value={userDetails?.mobile}
-              InputProps={{
-                readOnly: !editable,
-              }}
-              disabled
-            />
             <Select
               disabled={profile?.role !== "admin" || !editable}
               variant="outlined"
@@ -190,16 +175,6 @@ const Navbar = ({ onOpen }) => {
                 </MenuItem>
               ))}
             </Select>
-            <TextField
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              label="Username"
-              value={userDetails?.username}
-              InputProps={{
-                readOnly: !editable,
-              }}
-            />
           </Box>
 
           {/* Edit Button */}

@@ -7,7 +7,13 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.get("/start", (req, res) => {
   res.send("welcome to the auth server");
@@ -17,7 +23,10 @@ app.get("/start", (req, res) => {
 app.use("/api/v1/users", require("./routes/auth.routes"));
 
 // Assignment controller
-app.use("/api/v1/assignments", require("./routes/auth.routes"));
+app.use("/api/v1/assignments", require("./routes/assignment.routes"));
+
+// Lectures controller
+app.use("/api/v1/lectures", require("./routes/lecture.routes"));
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
