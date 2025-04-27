@@ -181,8 +181,8 @@ const AddLecture = ({ toggleDrawer, isDrawerOpen }) => {
                   fullWidth
                   type="text"
                   placeholder="Enter zoom invite link"
-                  name="total_post"
-                  value={newPost?.total_post || ""}
+                  name="lacture_video_link"
+                  value={newPost?.lacture_video_link || ""}
                   onChange={handleInputChange}
                   disabled={loading}
                 />
@@ -193,8 +193,8 @@ const AddLecture = ({ toggleDrawer, isDrawerOpen }) => {
                   fullWidth
                   type="text"
                   placeholder="Document Link"
-                  name="total_post"
-                  value={newPost?.total_post || ""}
+                  name="lacture_material_link"
+                  value={newPost?.lacture_material_link || ""}
                   onChange={handleInputChange}
                   disabled={loading}
                 />

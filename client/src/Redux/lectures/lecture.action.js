@@ -35,15 +35,9 @@ export const GetAllLectures = (query) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (query?.apply_link_avl_from === "today") {
-        dispatch({ type: ACTIVE_TODAY, payload: response?.data?.data });
-      } else if (query?.last_date === "today") {
-        dispatch({ type: EXPIRE_TODAY, payload: response?.data?.data });
-      } else if (query?.date_range === "today") {
-        dispatch({ type: POSTED_TODAY, payload: response?.data?.data });
-      } else {
-        dispatch(Lecturesuccess(response?.data.data));
-      }
+
+      dispatch(Lecturesuccess(response?.data.data));
+
       // console.log(response.data);
     } catch (error) {
       dispatch(lectureFailure(error.message));
@@ -56,11 +50,13 @@ export const GetSinglelecture = (id) => {
     dispatch(lecturerequest());
     const token = localStorage.getItem("accessToken");
     try {
-      const response = await axiosInstance.get(`/api/v1/lecture/${id}`, {
+      const response = await axiosInstance.get(`/api/v1/lectures/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      console.log(response.data)
       dispatch({
         type: SINGLE_Lectures_SUCCESS,
         payload: response?.data?.data,
@@ -76,7 +72,7 @@ export const updateLectures = (id, data) => {
     dispatch(lecturerequest());
     const token = localStorage.getItem("accessToken");
     try {
-      const response = await axiosInstance.put(`/api/v1/lecture/${id}`, data, {
+      const response = await axiosInstance.put(`/api/v1/lectures/${id}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,7 +95,7 @@ export const deletelecture = (id, data) => {
     const token = localStorage.getItem("accessToken");
     try {
       const response = await axiosInstance.delete(
-        `/api/v1/lecture/${id}`,
+        `/api/v1/lectures/${id}`,
         data,
         {
           headers: {
@@ -107,7 +103,7 @@ export const deletelecture = (id, data) => {
           },
         }
       );
-      if (response?.data?.status === 201) {
+      if (response?.data?.status === 200) {
         return "SUCCESS";
       } else {
         dispatch(lectureFailure(response?.data.message));
@@ -124,7 +120,7 @@ export const GetQuickOrNewLectures = (query) => {
     const token = localStorage.getItem("accessToken");
     try {
       const response = await axiosInstance.get(
-        `/admin/api/v1/lecture/quick/new?lecture_type=${query}`,
+        `/admin/api/v1/lectures/quick/new?lecture_type=${query}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

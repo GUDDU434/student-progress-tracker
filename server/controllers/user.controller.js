@@ -35,14 +35,14 @@ module.exports.LoginUser = async (req, res) => {
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "1d",
       }
     );
     const refresh_token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_REFRESH_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "30d",
       }
     );
     res.cookie("token", token, { httpOnly: true });
@@ -72,7 +72,7 @@ module.exports.RefreshToken = (req, res) => {
       { userId: decoded.userId, role: decoded.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "1d",
       }
     );
     res.cookie("token", newToken, { httpOnly: true });

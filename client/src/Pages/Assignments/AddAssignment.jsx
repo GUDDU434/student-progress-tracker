@@ -15,8 +15,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { GetAllLectures } from "../../Redux/lectures/lecture.action";
-import { initialInputData } from "../../utils/constants";
+import { GetAllAssignments } from "../../Redux/assignment/assignment.action";
 import useAxiosPrivate from "../../utils/useAxiosPrivate";
 
 const AddAssignment = ({ toggleDrawer, isDrawerOpen }) => {
@@ -51,15 +50,21 @@ const AddAssignment = ({ toggleDrawer, isDrawerOpen }) => {
     };
 
     axiosPrivate
-      .post("/api/v1/lectures", formData)
+      .post("/api/v1/assignments", formData)
       .then((res) => {
         toast.success("Data saved successfully!");
 
         // Clear the form fields
-        setNewpost(initialInputData);
+        setNewpost({
+          title: "",
+          description: "",
+          due_date: "",
+          track: "",
+          submission_link: "",
+        });
         setLoading(false);
         toggleDrawer(false);
-        dispatch(GetAllLectures());
+        dispatch(GetAllAssignments());
       })
       .catch((err) => {
         toast.error(err.response.data.message);

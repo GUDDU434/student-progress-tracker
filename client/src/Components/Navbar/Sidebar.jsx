@@ -31,7 +31,11 @@ const Sidebar = ({ isOpen, onClose }) => {
   let links = [
     { name: "Lectures", href: "/", icon: <DashboardIcon /> },
     { name: "Assignment", href: "/assignments", icon: <WorkIcon /> },
-    { name: "Analytics", href: "/analytics", icon: <ContactMailIcon /> },
+    {
+      name: "Analytics",
+      href: "/progress/analytics",
+      icon: <ContactMailIcon />,
+    },
     { name: "Add New Student", href: "/register", icon: <SiGnuprivacyguard /> },
   ];
 

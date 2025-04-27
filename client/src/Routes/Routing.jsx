@@ -4,14 +4,17 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 import Navbar from "../Components/Navbar/Navbar";
 import Sidebar from "../Components/Navbar/Sidebar";
-import Job from "../Pages/Assignments/Assignments";
+import Assignment from "../Pages/Assignments/Assignments";
 import Login from "../Pages/auth/Login";
 import Dashboard from "../Pages/Lectures/Lectures";
 import ProtectedRoute from "./ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import EditJob from "../Pages/Assignments/Edit";
+import EditAssignment from "../Pages/Assignments/EditAssignment";
 import Register from "../Pages/auth/Register";
+import EditLecture from "../Pages/Lectures/EditLecture";
+import LectureDetails from "../Pages/Lectures/LectureDetails";
+import ProgressAnalytics from "../Pages/Ananytics/ProgressAnalytics";
 
 const Routing = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -48,8 +51,20 @@ const Routing = () => {
                 <Route element={<ProtectedRoute isAuthenticated={isAuth} />}>
                   <Route path="/lactures" element={<Dashboard />} />
                   <Route path="/" element={<Dashboard />} />
-                  <Route path="/assignments" element={<Job />} />
-                  <Route path="/assignments/edit/:id" element={<EditJob />} />
+                  <Route path="/assignments" element={<Assignment />} />
+                  <Route
+                    path="/assignments/edit/:id"
+                    element={<EditAssignment />}
+                  />
+                  <Route
+                    path="/progress/analytics"
+                    element={<ProgressAnalytics />}
+                  />
+                  <Route path="/lectures/edit/:id" element={<EditLecture />} />
+                  <Route
+                    path="/lectures/details/:id"
+                    element={<LectureDetails />}
+                  />
                   <Route path="/register" element={<Register />} />
                   <Route path="*" element={() => <h1>404 Page Not Found</h1>} />
                 </Route>

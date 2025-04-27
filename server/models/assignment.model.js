@@ -29,7 +29,6 @@ const assignmentSchema = new mongoose.Schema(
     },
     submission_link: {
       type: String,
-      required: true,
     },
     status: {
       type: String,
