@@ -26,7 +26,11 @@ import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { deletelecture, GetAllLectures, updateLectures } from "../../Redux/lectures/lecture.action";
+import {
+  deletelecture,
+  GetAllLectures,
+  updateLectures,
+} from "../../Redux/lectures/lecture.action";
 import { formatDate } from "../../utils/common_func";
 import AddAssignment from "./AddAssignment";
 
@@ -43,6 +47,7 @@ const Assignments = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { AllLectures } = useSelector((state) => state.LecturesReducer);
+  const { profile } = useSelector((state) => state.loginReducer);
 
   useEffect(() => {
     dispatch(GetAllLectures({ page: page + 1, limit: rowsPerPage }));
@@ -208,12 +213,12 @@ const Assignments = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {AllLectures?.posts?.length === 0 ? (
+            {AllLectures?.assignment?.length === 0 ? (
               <TableRow sx={{ textAlign: "center" }}>
                 No data available
               </TableRow>
             ) : (
-              AllLectures?.posts?.map((Lectures, i) => (
+              AllLectures?.assignment?.map((Lectures, i) => (
                 <TableRow
                   sx={{
                     display: "flex",
@@ -239,11 +244,6 @@ const Assignments = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Switch
-                      defaultChecked={Lectures?.is_live}
-                      color="success"
-                      onChange={(e) => handleSwitch(Lectures?._id, e, "live")}
-                    />
                     <IconButton
                       color="error"
                       onClick={() => {
@@ -251,7 +251,7 @@ const Assignments = () => {
                         setDeleteId(Lectures?._id);
                       }}
                     >
-                      <MdDelete />
+                      Join
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -271,11 +271,13 @@ const Assignments = () => {
       </TableContainer>
 
       {/* Add New Post Component */}
-      <AddAssignment
-        isDrawerOpen={isDrawerOpen}
-        toggleDrawer={toggleDrawer}
-        mb={"rem"}
-      />
+      {(profile?.role === "admin" || profile?.role === "teacher") && (
+        <AddAssignment
+          isDrawerOpen={isDrawerOpen}
+          toggleDrawer={toggleDrawer}
+          mb={"rem"}
+        />
+      )}
 
       {/* Filter Modal */}
       <Modal

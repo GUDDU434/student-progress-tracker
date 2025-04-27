@@ -37,9 +37,7 @@ const Navbar = ({ onOpen }) => {
   const [userDetails, setUserDetails] = useState();
   const [editable, setEditable] = useState(false);
   const { profile } = useSelector((state) => state.loginReducer);
-
-  console.log("profile", profile);
-
+  
   useEffect(() => {
     dispatch(getUserDetails());
   }, [dispatch]);

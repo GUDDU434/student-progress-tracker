@@ -29,10 +29,7 @@ const Routing = () => {
   };
 
   useEffect(() => {
-   localStorage.getItem("accessToken")? setIsAuth(true) : setIsAuth(false);
-    
-
-    // console.log(token, isAuthenticated, auth);
+    localStorage.getItem("accessToken") ? setIsAuth(true) : setIsAuth(false);
 
     if (!isAuthenticated && !localStorage.getItem("accessToken")) {
       navigation("/login");

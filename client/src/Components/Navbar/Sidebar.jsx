@@ -2,7 +2,6 @@ import {
   Close as CloseIcon,
   ContactMail as ContactMailIcon,
   Dashboard as DashboardIcon,
-
   Work as WorkIcon,
 } from "@mui/icons-material";
 import {
@@ -21,18 +20,26 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import img from "../../img/png3.png";
 import { SiGnuprivacyguard } from "react-icons/si";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { profile } = useSelector((state) => state.loginReducer);
 
-  const links = [
-    { name: "Lectuures", href: "/", icon: <DashboardIcon /> },
+  let links = [
+    { name: "Lectures", href: "/", icon: <DashboardIcon /> },
     { name: "Assignment", href: "/assignments", icon: <WorkIcon /> },
     { name: "Analytics", href: "/analytics", icon: <ContactMailIcon /> },
     { name: "Add New Student", href: "/register", icon: <SiGnuprivacyguard /> },
   ];
+
+  if (profile.role === "student") {
+    links = links.filter(
+      (link) => link.name === "Lectures" || link.name === "Assignment"
+    );
+  }
 
   const handleLinkClick = (href) => {
     navigate(href);

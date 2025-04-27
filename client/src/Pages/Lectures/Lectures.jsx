@@ -26,7 +26,11 @@ import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { deletelecture, GetAllLectures, updateLectures } from "../../Redux/lectures/lecture.action";
+import {
+  deletelecture,
+  GetAllLectures,
+  updateLectures,
+} from "../../Redux/lectures/lecture.action";
 import { formatDate } from "../../utils/common_func";
 import AddLecture from "./AddLectures";
 
@@ -43,6 +47,7 @@ const Lectures = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { AllLectures } = useSelector((state) => state.LectureReducer);
+  const { profile } = useSelector((state) => state.loginReducer);
 
   useEffect(() => {
     dispatch(GetAllLectures({ page: page + 1, limit: rowsPerPage }));
@@ -138,20 +143,23 @@ const Lectures = () => {
         alignItems={{ xs: "stretch", sm: "center" }}
         sx={{ mb: 2, gap: { xs: 2, sm: 0 } }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={toggleDrawer(true)}
-          sx={{
-            borderRadius: 0,
-            display: "flex",
-            alignItems: "center",
-            mb: { xs: 1, sm: 0 },
-          }}
-        >
-          <IoMdAdd />
-          ADD NEW LECTURE
-        </Button>
+        {profile &&
+          (profile?.role === "admin" || profile?.role === "teacher") && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={toggleDrawer(true)}
+              sx={{
+                borderRadius: 0,
+                display: "flex",
+                alignItems: "center",
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              <IoMdAdd />
+              ADD NEW LECTURE
+            </Button>
+          )}
 
         {/* Search & Filter */}
         {/* <Box
@@ -270,7 +278,7 @@ const Lectures = () => {
         </Table>
       </TableContainer>
 
-      {/* Add New Post Component */}
+      {/* Add New Lecture */}
       <AddLecture
         isDrawerOpen={isDrawerOpen}
         toggleDrawer={toggleDrawer}
