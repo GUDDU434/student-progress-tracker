@@ -22,12 +22,15 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { IoFilter } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { deleteJob, GetAllJobs, updateJob } from "../../Redux/jobs/job.action";
+import {
+  deletelecture,
+  GetAllLectures,
+  updateLectures,
+} from "../../Redux/lectures/lecture.action";
 import { formatDate } from "../../utils/common_func";
 import AddLecture from "./AddLectures";
 
@@ -43,10 +46,11 @@ const Lectures = () => {
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { AllJobs } = useSelector((state) => state.JobReducer);
+  const { AllLectures } = useSelector((state) => state.LectureReducer);
+  const { profile } = useSelector((state) => state.loginReducer);
 
   useEffect(() => {
-    dispatch(GetAllJobs({ page: page + 1, limit: rowsPerPage }));
+    dispatch(GetAllLectures({ page: page + 1, limit: rowsPerPage }));
   }, [dispatch, page, rowsPerPage]);
 
   const toggleDrawer = (open) => (event) => {
@@ -80,10 +84,10 @@ const Lectures = () => {
     if (eventType === "admitcard") data.is_admitcard_avl = e.target.checked;
     if (eventType === "results") data.is_results_avl = e.target.checked;
 
-    dispatch(updateJob(id, data)).then((res) => {
+    dispatch(updateLectures(id, data)).then((res) => {
       if (res === "SUCCESS") {
         toast.success("Post updated successfully!");
-        dispatch(GetAllJobs());
+        dispatch(GetAllLectures());
       } else {
         toast.error("Something went wrong. Please try again later");
       }
@@ -91,14 +95,14 @@ const Lectures = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/jobs/edit/${id}`);
+    navigate(`/Lectures/edit/${id}`);
   };
 
   const handleDelete = () => {
-    dispatch(deleteJob(deleteId)).then((res) => {
+    dispatch(deletelecture(deleteId)).then((res) => {
       if (res === "SUCCESS") {
         toast.success("Post Deleted successfully!");
-        dispatch(GetAllJobs());
+        dispatch(GetAllLectures());
       } else {
         toast.error("Something went wrong. Please try again later");
       }
@@ -108,13 +112,13 @@ const Lectures = () => {
   };
 
   const search = () => {
-    dispatch(GetAllJobs({ search: searchTxt, limit: 100 }));
+    dispatch(GetAllLectures({ search: searchTxt, limit: 100 }));
   };
 
   const handleFilter = (e) => {
     console.log(filter, "filter");
     e.preventDefault();
-    dispatch(GetAllJobs({ ...filter, limit: 100 }));
+    dispatch(GetAllLectures({ ...filter, limit: 100 }));
     setIsFilterModalOpen(false);
   };
 
@@ -139,21 +143,26 @@ const Lectures = () => {
         alignItems={{ xs: "stretch", sm: "center" }}
         sx={{ mb: 2, gap: { xs: 2, sm: 0 } }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={toggleDrawer(true)}
-          sx={{
-            borderRadius: 0,
-            display: "flex",
-            alignItems: "center",
-            mb: { xs: 1, sm: 0 },
-          }}
-        >
-          <IoMdAdd />
-          ADD NEW LECTURE
-        </Button>
-        <Box
+        {profile &&
+          (profile?.role === "admin" || profile?.role === "teacher") && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={toggleDrawer(true)}
+              sx={{
+                borderRadius: 0,
+                display: "flex",
+                alignItems: "center",
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              <IoMdAdd />
+              ADD NEW LECTURE
+            </Button>
+          )}
+
+        {/* Search & Filter */}
+        {/* <Box
           display="flex"
           flexDirection={{ xs: "column", sm: "row" }}
           gap="10px"
@@ -183,7 +192,7 @@ const Lectures = () => {
             <IoFilter />
             <Typography>Filter</Typography>
           </Button>
-        </Box>
+        </Box> */}
       </Box>
 
       <TableContainer
@@ -207,25 +216,25 @@ const Lectures = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {AllJobs?.posts?.length === 0 ? (
+            {AllLectures?.lectures?.length === 0 ? (
               <TableRow sx={{ textAlign: "center" }}>
                 No data available
               </TableRow>
             ) : (
-              AllJobs?.posts?.map((job, i) => (
+              AllLectures?.lectures?.map((Lecture, i) => (
                 <TableRow
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
                     backgroundColor: `${i % 2 === 0 ? "#c9d4e7" : "white"}`,
                   }}
-                  key={job?._id}
+                  key={Lecture?._id}
                 >
                   <TableCell
                     sx={{ cursor: "pointer" }}
-                    onClick={() => handleEdit(job._id)}
+                    onClick={() => handleEdit(Lecture._id)}
                   >
-                    <Typography>{job?.vacancy_title}</Typography>
+                    <Typography>{Lecture?.vacancy_title}</Typography>
                     <Typography
                       sx={{
                         fontSize: "12px",
@@ -233,21 +242,21 @@ const Lectures = () => {
                         color: "gray",
                       }}
                     >
-                      Created: {formatDate(job?.createdAt)} By:{" "}
-                      {job?.created_by?.name}
+                      Created: {formatDate(Lecture?.createdAt)} By:{" "}
+                      {Lecture?.created_by?.name}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Switch
-                      defaultChecked={job?.is_live}
+                      defaultChecked={Lecture?.is_live}
                       color="success"
-                      onChange={(e) => handleSwitch(job?._id, e, "live")}
+                      onChange={(e) => handleSwitch(Lecture?._id, e, "live")}
                     />
                     <IconButton
                       color="error"
                       onClick={() => {
                         setIsDeleteModal(true);
-                        setDeleteId(job?._id);
+                        setDeleteId(Lecture?._id);
                       }}
                     >
                       <MdDelete />
@@ -260,7 +269,7 @@ const Lectures = () => {
           <TablePagination
             rowsPerPageOptions={[10, 20, 50, 100]}
             // component="div"
-            count={AllJobs?.total || 0}
+            count={AllLectures?.total || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -269,8 +278,12 @@ const Lectures = () => {
         </Table>
       </TableContainer>
 
-      {/* Add New Post Component */}
-      <AddLecture isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} mb={"rem"} />
+      {/* Add New Lecture */}
+      <AddLecture
+        isDrawerOpen={isDrawerOpen}
+        toggleDrawer={toggleDrawer}
+        mb={"rem"}
+      />
 
       {/* Filter Modal */}
       <Modal
@@ -293,7 +306,7 @@ const Lectures = () => {
           }}
         >
           <Typography id="filter-modal-title" variant="h6" component="h2">
-            Filter Jobs
+            Filter Lectures
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             {/* Filter by date range */}

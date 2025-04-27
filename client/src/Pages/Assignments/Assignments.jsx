@@ -22,12 +22,15 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { IoFilter } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { deleteJob, GetAllJobs, updateJob } from "../../Redux/jobs/job.action";
+import {
+  deletelecture,
+  GetAllLectures,
+  updateLectures,
+} from "../../Redux/lectures/lecture.action";
 import { formatDate } from "../../utils/common_func";
 import AddAssignment from "./AddAssignment";
 
@@ -43,10 +46,11 @@ const Assignments = () => {
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { AllJobs } = useSelector((state) => state.JobReducer);
+  const { AllLectures } = useSelector((state) => state.LecturesReducer);
+  const { profile } = useSelector((state) => state.loginReducer);
 
   useEffect(() => {
-    dispatch(GetAllJobs({ page: page + 1, limit: rowsPerPage }));
+    dispatch(GetAllLectures({ page: page + 1, limit: rowsPerPage }));
   }, [dispatch, page, rowsPerPage]);
 
   const toggleDrawer = (open) => (event) => {
@@ -80,10 +84,10 @@ const Assignments = () => {
     if (eventType === "admitcard") data.is_admitcard_avl = e.target.checked;
     if (eventType === "results") data.is_results_avl = e.target.checked;
 
-    dispatch(updateJob(id, data)).then((res) => {
+    dispatch(updateLectures(id, data)).then((res) => {
       if (res === "SUCCESS") {
         toast.success("Post updated successfully!");
-        dispatch(GetAllJobs());
+        dispatch(GetAllLectures());
       } else {
         toast.error("Something went wrong. Please try again later");
       }
@@ -91,14 +95,14 @@ const Assignments = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/jobs/edit/${id}`);
+    navigate(`/Lectures/edit/${id}`);
   };
 
   const handleDelete = () => {
-    dispatch(deleteJob(deleteId)).then((res) => {
+    dispatch(deletelecture(deleteId)).then((res) => {
       if (res === "SUCCESS") {
         toast.success("Post Deleted successfully!");
-        dispatch(GetAllJobs());
+        dispatch(GetAllLectures());
       } else {
         toast.error("Something went wrong. Please try again later");
       }
@@ -108,13 +112,13 @@ const Assignments = () => {
   };
 
   const search = () => {
-    dispatch(GetAllJobs({ search: searchTxt, limit: 100 }));
+    dispatch(GetAllLectures({ search: searchTxt, limit: 100 }));
   };
 
   const handleFilter = (e) => {
     console.log(filter, "filter");
     e.preventDefault();
-    dispatch(GetAllJobs({ ...filter, limit: 100 }));
+    dispatch(GetAllLectures({ ...filter, limit: 100 }));
     setIsFilterModalOpen(false);
   };
 
@@ -153,7 +157,9 @@ const Assignments = () => {
           <IoMdAdd />
           Add New Assignment
         </Button>
-        <Box
+
+        {/* Search & filter container */}
+        {/* <Box
           display="flex"
           flexDirection={{ xs: "column", sm: "row" }}
           gap="10px"
@@ -183,7 +189,7 @@ const Assignments = () => {
             <IoFilter />
             <Typography>Filter</Typography>
           </Button>
-        </Box>
+        </Box> */}
       </Box>
 
       <TableContainer
@@ -207,25 +213,25 @@ const Assignments = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {AllJobs?.posts?.length === 0 ? (
+            {AllLectures?.assignment?.length === 0 ? (
               <TableRow sx={{ textAlign: "center" }}>
                 No data available
               </TableRow>
             ) : (
-              AllJobs?.posts?.map((job, i) => (
+              AllLectures?.assignment?.map((Lectures, i) => (
                 <TableRow
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
                     backgroundColor: `${i % 2 === 0 ? "#c9d4e7" : "white"}`,
                   }}
-                  key={job?._id}
+                  key={Lectures?._id}
                 >
                   <TableCell
                     sx={{ cursor: "pointer" }}
-                    onClick={() => handleEdit(job._id)}
+                    onClick={() => handleEdit(Lectures._id)}
                   >
-                    <Typography>{job?.vacancy_title}</Typography>
+                    <Typography>{Lectures?.vacancy_title}</Typography>
                     <Typography
                       sx={{
                         fontSize: "12px",
@@ -233,24 +239,19 @@ const Assignments = () => {
                         color: "gray",
                       }}
                     >
-                      Created: {formatDate(job?.createdAt)} By:{" "}
-                      {job?.created_by?.name}
+                      Created: {formatDate(Lectures?.createdAt)} By:{" "}
+                      {Lectures?.created_by?.name}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Switch
-                      defaultChecked={job?.is_live}
-                      color="success"
-                      onChange={(e) => handleSwitch(job?._id, e, "live")}
-                    />
                     <IconButton
                       color="error"
                       onClick={() => {
                         setIsDeleteModal(true);
-                        setDeleteId(job?._id);
+                        setDeleteId(Lectures?._id);
                       }}
                     >
-                      <MdDelete />
+                      Join
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -260,7 +261,7 @@ const Assignments = () => {
           <TablePagination
             rowsPerPageOptions={[10, 20, 50, 100]}
             // component="div"
-            count={AllJobs?.total || 0}
+            count={AllLectures?.total || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -270,11 +271,13 @@ const Assignments = () => {
       </TableContainer>
 
       {/* Add New Post Component */}
-      <AddAssignment
-        isDrawerOpen={isDrawerOpen}
-        toggleDrawer={toggleDrawer}
-        mb={"rem"}
-      />
+      {(profile?.role === "admin" || profile?.role === "teacher") && (
+        <AddAssignment
+          isDrawerOpen={isDrawerOpen}
+          toggleDrawer={toggleDrawer}
+          mb={"rem"}
+        />
+      )}
 
       {/* Filter Modal */}
       <Modal
@@ -297,7 +300,7 @@ const Assignments = () => {
           }}
         >
           <Typography id="filter-modal-title" variant="h6" component="h2">
-            Filter Jobs
+            Filter Lectures
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             {/* Filter by date range */}

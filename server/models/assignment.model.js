@@ -8,9 +8,12 @@ const assignmentSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
     due_date: {
+      type: Date,
+      required: true,
+    },
+    start_date: {
       type: Date,
       required: true,
     },

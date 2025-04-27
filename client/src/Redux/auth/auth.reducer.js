@@ -9,7 +9,6 @@ const initialState = {
   isLoading: false,
   isError: null,
   profile: {},
-  AllUsers: { users: [], total: 0, nextUrl: null },
 };
 
 export const reducer = (state = initialState, { type, payload }) => {

@@ -76,11 +76,14 @@ export const getUserDetails = () => {
       });
       if (response?.data?.status === 200) {
         dispatch(UserDetailsSuccess(response?.data?.data));
+        return "SUCCESS";
       } else {
         dispatch(UserDetailsFailure(response?.data.message));
+        return "FAILURE";
       }
     } catch (error) {
       dispatch(UserDetailsFailure(error.message));
+      return "FAILURE";
     }
   };
 };

@@ -70,8 +70,7 @@ export function AuthProvider({ children }) {
   const initialize = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-      localStorage.setItem("accessToken", accessToken);
-      const response = await axiosPrivate.get("/api/v1/users/details", {
+      const response = await axiosPrivate.get("/api/v1/users/details/token", {
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
@@ -94,6 +93,8 @@ export function AuthProvider({ children }) {
           user: null,
         },
       });
+      console.error(error);
+      throw error;
     }
   }, [axiosPrivate]);
 
@@ -102,7 +103,7 @@ export function AuthProvider({ children }) {
     async (username, password) => {
       try {
         const response = await axiosInstance.post("/api/v1/users/login", {
-          username,
+          email: username,
           password,
         });
         const { accessToken, refreshToken, role } = response?.data?.data;

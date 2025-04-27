@@ -15,7 +15,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { GetAllJobs } from "../../Redux/jobs/job.action";
+import { GetAllLectures } from "../../Redux/lectures/lecture.action";
 import { initialInputData } from "../../utils/constants";
 import useAxiosPrivate from "../../utils/useAxiosPrivate";
 
@@ -25,7 +25,13 @@ const AddAssignment = ({ toggleDrawer, isDrawerOpen }) => {
   const dispatch = useDispatch();
 
   // Initial Input Form Data
-  const [newPost, setNewpost] = useState(initialInputData);
+  const [newPost, setNewpost] = useState({
+    title: "",
+    description: "",
+    due_date: "",
+    track: "",
+    submission_link: "",
+  });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -44,12 +50,8 @@ const AddAssignment = ({ toggleDrawer, isDrawerOpen }) => {
       ...newPost,
     };
 
-    // Delete unwanted fields
-    delete formData.post_date;
-    delete formData.last_date;
-
     axiosPrivate
-      .post("/api/v1/posts", formData)
+      .post("/api/v1/lectures", formData)
       .then((res) => {
         toast.success("Data saved successfully!");
 
@@ -57,7 +59,7 @@ const AddAssignment = ({ toggleDrawer, isDrawerOpen }) => {
         setNewpost(initialInputData);
         setLoading(false);
         toggleDrawer(false);
-        dispatch(GetAllJobs());
+        dispatch(GetAllLectures());
       })
       .catch((err) => {
         toast.error(err.response.data.message);
@@ -127,21 +129,46 @@ const AddAssignment = ({ toggleDrawer, isDrawerOpen }) => {
               <TextField
                 fullWidth
                 type="text"
-                name="lacture_title"
+                name="title"
                 placeholder="Title"
-                value={newPost?.lacture_title || ""}
+                value={newPost?.title || ""}
                 onChange={handleInputChange}
                 disabled={loading}
               />
             </Grid>
             <Grid item xs={12} md={4}>
-              <FormLabel>Date and Time*</FormLabel>
+              <FormLabel>Description*</FormLabel>
+              <TextField
+                fullWidth
+                type="text"
+                name="description"
+                placeholder="Description"
+                value={newPost?.description || ""}
+                onChange={handleInputChange}
+                disabled={loading}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormLabel>Start and Time*</FormLabel>
               <TextField
                 fullWidth
                 type="datetime-local"
-                placeholder="Lecture Date"
-                name="lacture_date"
-                value={newPost?.lacture_date || ""}
+                placeholder="Start Date"
+                name="start_date"
+                value={newPost?.start_date || ""}
+                onChange={handleInputChange}
+                disabled={loading}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormLabel>End Date & Time*</FormLabel>
+              <TextField
+                fullWidth
+                type="datetime-local"
+                placeholder="Due Date"
+                name="due_date"
+                value={newPost?.due_date || ""}
                 onChange={handleInputChange}
                 disabled={loading}
                 required
@@ -162,38 +189,6 @@ const AddAssignment = ({ toggleDrawer, isDrawerOpen }) => {
               </Select>
             </Grid>
           </Grid>
-
-          {/*post-date, last-date, apply-from */}
-
-          {/* Apply Mode, Job type, Total posts */}
-          <Box mt={2}>
-            <Grid container spacing={2} alignItems="center" mb={2}>
-              <Grid item xs={12} md={4}>
-                <FormLabel>Link to JOin</FormLabel>
-                <TextField
-                  fullWidth
-                  type="text"
-                  placeholder="Enter zoom invite link"
-                  name="total_post"
-                  value={newPost?.total_post || ""}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                />
-              </Grid>{" "}
-              <Grid item xs={12} md={4}>
-                <FormLabel>Doc Link</FormLabel>
-                <TextField
-                  fullWidth
-                  type="text"
-                  placeholder="Document Link"
-                  name="total_post"
-                  value={newPost?.total_post || ""}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                />
-              </Grid>
-            </Grid>
-          </Box>
 
           {/* Submit Button */}
           <Stack direction="row" justifyContent="end" spacing={2} mt={4}>

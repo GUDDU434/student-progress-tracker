@@ -4,11 +4,10 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 import Navbar from "../Components/Navbar/Navbar";
 import Sidebar from "../Components/Navbar/Sidebar";
+import Job from "../Pages/Assignments/Assignments";
 import Login from "../Pages/auth/Login";
 import Dashboard from "../Pages/Lectures/Lectures";
-import Job from "../Pages/Assignments/Assignments";
 import ProtectedRoute from "./ProtectedRoute";
-// import AddFaqModal from "../Pages/FAQ/AddFaqModal";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import EditJob from "../Pages/Assignments/Edit";
@@ -18,8 +17,6 @@ const Routing = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const navigation = useNavigate();
-
-  // console.log(isAuthenticated, user);
 
   const [isAuth, setIsAuth] = useState(false);
 
