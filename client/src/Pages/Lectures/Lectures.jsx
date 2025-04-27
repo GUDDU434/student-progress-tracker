@@ -10,7 +10,6 @@ import {
   MenuItem,
   Modal,
   Select,
-  Switch,
   Table,
   TableBody,
   TableCell,
@@ -20,6 +19,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { CiEdit } from "react-icons/ci";
+import { FaCalendarAlt, FaUser } from "react-icons/fa";
+
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -122,6 +124,33 @@ const Lectures = () => {
     setIsFilterModalOpen(false);
   };
 
+  const handleUpdate = (lecture) => {
+    if (
+      profile?.role === "student" &&
+      !lecture.students.includes(profile._id)
+    ) {
+      let students = lecture?.students?.find(
+        (student) =>
+          student?.student_id === profile._id.toString() && student.attended
+      );
+
+      console.log(students, "student");
+
+      if (!students) {
+        dispatch(
+          updateLectures(lecture._id, {
+            students: [
+              ...lecture.students,
+              { student_id: profile._id, attended: true },
+            ],
+          })
+        );
+      }
+
+      window.open(lecture.lacture_video_link);
+    }
+  };
+
   useEffect(() => {
     if (dateRange.from && dateRange.to) {
       setFilter((prevFilter) => ({
@@ -211,7 +240,7 @@ const Lectures = () => {
                 backgroundColor: "#1976d2",
               }}
             >
-              <TableCell sx={{ color: "white" }}>Title</TableCell>
+              <TableCell sx={{ color: "white" }}>Lecture</TableCell>
               <TableCell sx={{ color: "white" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -231,10 +260,12 @@ const Lectures = () => {
                   key={Lecture?._id}
                 >
                   <TableCell
+                    onClick={() =>
+                      navigate(`/lectures/details/${Lecture?._id}`)
+                    }
                     sx={{ cursor: "pointer" }}
-                    onClick={() => handleEdit(Lecture._id)}
                   >
-                    <Typography>{Lecture?.vacancy_title}</Typography>
+                    <Typography>{Lecture?.lacture_title}</Typography>
                     <Typography
                       sx={{
                         fontSize: "12px",
@@ -242,25 +273,47 @@ const Lectures = () => {
                         color: "gray",
                       }}
                     >
-                      Created: {formatDate(Lecture?.createdAt)} By:{" "}
-                      {Lecture?.created_by?.name}
+                      <FaUser />: {Lecture?.instructor?.name} <FaCalendarAlt />{" "}
+                      {formatDate(Lecture?.lacture_date, true)}{" "}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Switch
-                      defaultChecked={Lecture?.is_live}
-                      color="success"
-                      onChange={(e) => handleSwitch(Lecture?._id, e, "live")}
-                    />
-                    <IconButton
-                      color="error"
-                      onClick={() => {
-                        setIsDeleteModal(true);
-                        setDeleteId(Lecture?._id);
-                      }}
-                    >
-                      <MdDelete />
-                    </IconButton>
+                    {profile?.role === "admin" ||
+                    profile?.role === "teacher" ? (
+                      <>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleEdit(Lecture._id)}
+                        >
+                          <CiEdit />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            setIsDeleteModal(true);
+                            setDeleteId(Lecture?._id);
+                          }}
+                        >
+                          <MdDelete />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <Typography
+                        color="primary"
+                        onClick={() => handleUpdate(Lecture)}
+                        disabled={
+                          new Date(Lecture?.lacture_date).getTime() +
+                            24 * 60 * 60 * 1000 <
+                          Date.now()
+                        }
+                      >
+                        {new Date(Lecture?.lacture_date).getTime() +
+                          6 * 60 * 60 * 1000 <
+                        Date.now()
+                          ? "Watch"
+                          : "Join"}
+                      </Typography>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

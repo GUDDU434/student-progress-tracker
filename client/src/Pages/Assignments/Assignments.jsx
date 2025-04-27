@@ -33,6 +33,8 @@ import {
 } from "../../Redux/lectures/lecture.action";
 import { formatDate } from "../../utils/common_func";
 import AddAssignment from "./AddAssignment";
+import { GetAllAssignments } from "../../Redux/assignment/assignment.action";
+import { FaCalendarAlt, FaUser } from "react-icons/fa";
 
 const Assignments = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -46,11 +48,11 @@ const Assignments = () => {
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { AllLectures } = useSelector((state) => state.LecturesReducer);
+  const { AllAssignments } = useSelector((state) => state.AssignmentReducer);
   const { profile } = useSelector((state) => state.loginReducer);
 
   useEffect(() => {
-    dispatch(GetAllLectures({ page: page + 1, limit: rowsPerPage }));
+    dispatch(GetAllAssignments({ page: page + 1, limit: rowsPerPage }));
   }, [dispatch, page, rowsPerPage]);
 
   const toggleDrawer = (open) => (event) => {
@@ -95,7 +97,7 @@ const Assignments = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/Lectures/edit/${id}`);
+    navigate(`/assignments/edit/${id}`);
   };
 
   const handleDelete = () => {
@@ -213,25 +215,25 @@ const Assignments = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {AllLectures?.assignment?.length === 0 ? (
+            {AllAssignments?.assignments?.length === 0 ? (
               <TableRow sx={{ textAlign: "center" }}>
                 No data available
               </TableRow>
             ) : (
-              AllLectures?.assignment?.map((Lectures, i) => (
+              AllAssignments?.assignments?.map((assignment, i) => (
                 <TableRow
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
                     backgroundColor: `${i % 2 === 0 ? "#c9d4e7" : "white"}`,
                   }}
-                  key={Lectures?._id}
+                  key={assignment?._id}
                 >
                   <TableCell
                     sx={{ cursor: "pointer" }}
-                    onClick={() => handleEdit(Lectures._id)}
+                    onClick={() => handleEdit(assignment._id)}
                   >
-                    <Typography>{Lectures?.vacancy_title}</Typography>
+                    <Typography>{assignment?.title}</Typography>
                     <Typography
                       sx={{
                         fontSize: "12px",
@@ -239,19 +241,25 @@ const Assignments = () => {
                         color: "gray",
                       }}
                     >
-                      Created: {formatDate(Lectures?.createdAt)} By:{" "}
-                      {Lectures?.created_by?.name}
+                      <FaUser />: {assignment?.posted_by?.name}{" "}
+                      <FaCalendarAlt />{" "}
+                      {formatDate(assignment?.start_date, true)}{" "}
                     </Typography>
                   </TableCell>
                   <TableCell>
+                    <Switch
+                      defaultChecked={assignment?.is_live}
+                      color="success"
+                      onChange={(e) => handleSwitch(assignment?._id, e, "live")}
+                    />
                     <IconButton
                       color="error"
                       onClick={() => {
                         setIsDeleteModal(true);
-                        setDeleteId(Lectures?._id);
+                        setDeleteId(assignment?._id);
                       }}
                     >
-                      Join
+                      <MdDelete />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -261,7 +269,7 @@ const Assignments = () => {
           <TablePagination
             rowsPerPageOptions={[10, 20, 50, 100]}
             // component="div"
-            count={AllLectures?.total || 0}
+            count={AllAssignments?.total || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
