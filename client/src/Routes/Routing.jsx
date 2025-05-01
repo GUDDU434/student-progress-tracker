@@ -15,6 +15,7 @@ import Register from "../Pages/auth/Register";
 import EditLecture from "../Pages/Lectures/EditLecture";
 import LectureDetails from "../Pages/Lectures/LectureDetails";
 import ProgressAnalytics from "../Pages/Ananytics/ProgressAnalytics";
+import AssignmentDetails from "../Pages/Assignments/AssignmentDetails";
 
 const Routing = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -55,6 +56,10 @@ const Routing = () => {
                   <Route
                     path="/assignments/edit/:id"
                     element={<EditAssignment />}
+                  />
+                  <Route
+                    path="/assignments/details/:id"
+                    element={<AssignmentDetails />}
                   />
                   <Route
                     path="/progress/analytics"

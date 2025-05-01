@@ -3,6 +3,7 @@ import { axiosInstance } from "../../utils/axiosInstance";
 export const SWLA_REQ = "SWLA_REQ"; //STUDENT WISE LECTURE ANALYTICS SWLA
 export const SWLA_SUCCESS = "SWLA_SUCCESS";
 export const SWLA_FAILURE = "SWLA_FAILURE";
+export const SINGLE_SWLA_SUCCESS = "SINGLE_SWLA_SUCCESS";
 
 const swlarequest = () => ({
   type: SWLA_REQ,
@@ -18,13 +19,18 @@ const swlaFailure = (error) => ({
   payload: error,
 });
 
+const singleSwlaSuccess = (data) => ({
+  type: SINGLE_SWLA_SUCCESS,
+  payload: data,
+});
+
 export const GetAllswlas = (query) => {
   return async (dispatch) => {
     dispatch(swlarequest());
     const token = localStorage.getItem("accessToken");
     try {
       const response = await axiosInstance.get(
-        "/api/v1/student_wise_lecturess",
+        "/api/v1/analytics/studentStats",
         {
           params: query,
           headers: {
@@ -51,11 +57,7 @@ export const GetSingleswla = (id) => {
         },
       });
 
-      console.log(response.data);
-      dispatch({
-        type: "SINGLE_SWLA_SUCCESS",
-        payload: response?.data?.data,
-      });
+      dispatch(singleSwlaSuccess(response?.data?.data));
     } catch (error) {
       dispatch(swlaFailure(error.message));
     }

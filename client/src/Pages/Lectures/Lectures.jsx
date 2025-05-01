@@ -332,11 +332,14 @@ const Lectures = () => {
       </TableContainer>
 
       {/* Add New Lecture */}
-      <AddLecture
-        isDrawerOpen={isDrawerOpen}
-        toggleDrawer={toggleDrawer}
-        mb={"rem"}
-      />
+
+      {(profile?.role === "admin" || profile?.role === "teacher") && (
+        <AddLecture
+          isDrawerOpen={isDrawerOpen}
+          toggleDrawer={toggleDrawer}
+          mb={"rem"}
+        />
+      )}
 
       {/* Filter Modal */}
       <Modal

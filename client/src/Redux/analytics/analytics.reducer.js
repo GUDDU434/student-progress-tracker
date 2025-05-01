@@ -1,6 +1,6 @@
 import {
   SWLA_FAILURE,
-  SWLA_REQUEST,
+  SWLA_REQ,
   SWLA_SUCCESS,
   SINGLE_SWLA_SUCCESS,
 } from "./analytics.action";
@@ -14,7 +14,7 @@ const initialswla = {
 
 export const reducer = (state = initialswla, { type, payload }) => {
   switch (type) {
-    case SWLA_REQUEST:
+    case SWLA_REQ:
       return {
         ...state,
         isLoading: true,

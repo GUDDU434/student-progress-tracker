@@ -43,7 +43,6 @@ const Assignments = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchTxt, setSearchTxt] = useState("");
   const [filter, setFilter] = useState({});
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
   const dispatch = useDispatch();
@@ -65,10 +64,6 @@ const Assignments = () => {
     setIsDrawerOpen(open);
   };
 
-  const handleFilterModalOpen = () => {
-    setFilter({});
-    setIsFilterModalOpen(true);
-  };
   const handleFilterModalClose = () => setIsFilterModalOpen(false);
 
   const handleChangePage = (event, newPage) => {
@@ -113,10 +108,6 @@ const Assignments = () => {
     });
   };
 
-  const search = () => {
-    dispatch(GetAllLectures({ search: searchTxt, limit: 100 }));
-  };
-
   const handleFilter = (e) => {
     console.log(filter, "filter");
     e.preventDefault();
@@ -145,53 +136,22 @@ const Assignments = () => {
         alignItems={{ xs: "stretch", sm: "center" }}
         sx={{ mb: 2, gap: { xs: 2, sm: 0 } }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={toggleDrawer(true)}
-          sx={{
-            borderRadius: 0,
-            display: "flex",
-            alignItems: "center",
-            mb: { xs: 1, sm: 0 },
-          }}
-        >
-          <IoMdAdd />
-          Add New Assignment
-        </Button>
-
-        {/* Search & filter container */}
-        {/* <Box
-          display="flex"
-          flexDirection={{ xs: "column", sm: "row" }}
-          gap="10px"
-        >
-          <Input
-            placeholder="Search by title"
-            sx={{ borderRadius: 0, mb: { xs: 1, sm: 0 } }}
-            onChange={(e) => setSearchTxt(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                search();
-              }
-            }}
-          />
+        {(profile?.role === "admin" || profile?.role === "teacher") && (
           <Button
             variant="contained"
-            sx={{ borderRadius: 0, mb: { xs: 1, sm: 0 } }}
-            onClick={search}
+            color="primary"
+            onClick={toggleDrawer(true)}
+            sx={{
+              borderRadius: 0,
+              display: "flex",
+              alignItems: "center",
+              mb: { xs: 1, sm: 0 },
+            }}
           >
-            Search
+            <IoMdAdd />
+            Add New Assignment
           </Button>
-          <Button
-            variant="outlined"
-            sx={{ borderRadius: 0, display: "flex", alignItems: "center" }}
-            onClick={handleFilterModalOpen}
-          >
-            <IoFilter />
-            <Typography>Filter</Typography>
-          </Button>
-        </Box> */}
+        )}
       </Box>
 
       <TableContainer
@@ -231,7 +191,9 @@ const Assignments = () => {
                 >
                   <TableCell
                     sx={{ cursor: "pointer" }}
-                    onClick={() => handleEdit(assignment._id)}
+                    onClick={() =>
+                      navigate(`/assignments/details/${assignment?._id}`)
+                    }
                   >
                     <Typography>{assignment?.title}</Typography>
                     <Typography
@@ -247,20 +209,33 @@ const Assignments = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Switch
-                      defaultChecked={assignment?.is_live}
-                      color="success"
-                      onChange={(e) => handleSwitch(assignment?._id, e, "live")}
-                    />
-                    <IconButton
-                      color="error"
-                      onClick={() => {
-                        setIsDeleteModal(true);
-                        setDeleteId(assignment?._id);
-                      }}
-                    >
-                      <MdDelete />
-                    </IconButton>
+                    {profile?.role === "admin" ||
+                    profile?.role === "teacher" ? (
+                      <>
+                        <Switch
+                          defaultChecked={assignment?.is_live}
+                          color="success"
+                          onChange={(e) =>
+                            handleSwitch(assignment?._id, e, "live")
+                          }
+                        />
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            setIsDeleteModal(true);
+                            setDeleteId(assignment?._id);
+                          }}
+                        >
+                          <MdDelete />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <Typography color="primary">
+                        {assignment?.submitted_by?.includes(profile?._id)
+                          ? "Completed"
+                          : "New"}
+                      </Typography>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

@@ -28,6 +28,9 @@ app.use("/api/v1/assignments", require("./routes/assignment.routes"));
 // Lectures controller
 app.use("/api/v1/lectures", require("./routes/lecture.routes"));
 
+// Analytics controller
+app.use("/api/v1/analytics", require("./routes/analytic.routes"));
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
