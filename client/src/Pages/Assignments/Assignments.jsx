@@ -27,11 +27,10 @@ import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { GetAllAssignments } from "../../Redux/assignment/assignment.action";
 import {
-  deletelecture,
-  GetAllLectures,
-} from "../../Redux/lectures/lecture.action";
+  deleteassignment,
+  GetAllAssignments,
+} from "../../Redux/assignment/assignment.action";
 import { formatDate } from "../../utils/common_func";
 import AddAssignment from "./AddAssignment";
 
@@ -79,10 +78,10 @@ const Assignments = () => {
   };
 
   const handleDelete = () => {
-    dispatch(deletelecture(deleteId)).then((res) => {
+    dispatch(deleteassignment(deleteId)).then((res) => {
       if (res === "SUCCESS") {
         toast.success("Post Deleted successfully!");
-        dispatch(GetAllLectures());
+        dispatch(GetAllAssignments());
       } else {
         toast.error("Something went wrong. Please try again later");
       }
@@ -94,7 +93,7 @@ const Assignments = () => {
   const handleFilter = (e) => {
     console.log(filter, "filter");
     e.preventDefault();
-    dispatch(GetAllLectures({ ...filter, limit: 100 }));
+    dispatch(GetAllAssignments({ ...filter, limit: 100 }));
     setIsFilterModalOpen(false);
   };
 
@@ -267,7 +266,7 @@ const Assignments = () => {
           }}
         >
           <Typography id="filter-modal-title" variant="h6" component="h2">
-            Filter Lectures
+            Filter Assignments
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             {/* Filter by date range */}

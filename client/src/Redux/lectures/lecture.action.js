@@ -103,7 +103,7 @@ export const deletelecture = (id, data) => {
           },
         }
       );
-      if (response?.data?.status === 200) {
+      if (response?.status === 200) {
         return "SUCCESS";
       } else {
         dispatch(lectureFailure(response?.data.message));
