@@ -94,7 +94,7 @@ export const deleteassignment = (id, data) => {
     const token = localStorage.getItem("accessToken");
     try {
       const response = await axiosInstance.delete(
-        `/api/v1/assignment/${id}`,
+        `/api/v1/assignments/${id}`,
         data,
         {
           headers: {
@@ -102,7 +102,7 @@ export const deleteassignment = (id, data) => {
           },
         }
       );
-      if (response?.data?.status === 201) {
+      if (response?.status === 200) {
         return "SUCCESS";
       } else {
         dispatch(assignmentFailure(response?.data.message));
