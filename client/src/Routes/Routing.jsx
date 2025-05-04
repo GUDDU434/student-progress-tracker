@@ -20,11 +20,10 @@ import RoleBasedRoute from "./RoleBasedRoute";
 import { useSelector } from "react-redux";
 
 const Routing = () => {
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const navigation = useNavigate();
-    const { profile } = useSelector((state) => state.loginReducer);
-  
+  const { profile } = useSelector((state) => state.loginReducer);
 
   const [isAuth, setIsAuth] = useState(false);
 
@@ -41,6 +40,8 @@ const Routing = () => {
 
     if (!isAuthenticated && !localStorage.getItem("accessToken")) {
       navigation("/login");
+    } else {
+      // navigation("/");
     }
   }, [navigation, isAuth, isAuthenticated]);
 

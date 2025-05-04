@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import { axiosInstance } from "../../utils/axiosInstance";
 import { useSelector } from "react-redux";
+import { isStrongPassword } from "../../utils/common_func";
 const Register = () => {
   const { profile } = useSelector((state) => state.loginReducer);
-  let currentUserRole = localStorage.getItem("role");
   const initialFormState = {
     password: "",
     email: "",
@@ -36,6 +36,22 @@ const Register = () => {
     // Check if current user is admin
     if (profile.role !== "admin") {
       setToastMessage("Only admin can create new users.");
+      setToastSeverity("error");
+      setOpenToast(true);
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setToastMessage("Password should be at least 8 characters long.");
+      setToastSeverity("error");
+      setOpenToast(true);
+      return;
+    }
+
+    if (!isStrongPassword(formData.password)) {
+      setToastMessage(
+        "Password should have at least one uppercase letter, one lowercase letter, one number, and one special character."
+      );
       setToastSeverity("error");
       setOpenToast(true);
       return;

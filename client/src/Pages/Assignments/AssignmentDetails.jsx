@@ -117,7 +117,7 @@ const AssignmentDetails = () => {
               assignmentDetails?.submitted_by?.length > 0 && (
                 <Box mt={4}>
                   <Typography variant="h6" mb={2}>
-                    Students:
+                    Students: ({assignmentDetails?.submitted_by?.length})
                   </Typography>
                   {assignmentDetails.submitted_by?.map((student, index) => (
                     <Box
@@ -134,7 +134,13 @@ const AssignmentDetails = () => {
                         {index + 1} {student?.student_id?.name}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        {student?.submission_link}
+                        <a
+                          href={student?.submission_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {student?.submission_link}
+                        </a>
                       </Typography>
                     </Box>
                   ))}

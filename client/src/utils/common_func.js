@@ -46,3 +46,12 @@ export const formatDateTimeUTC = (date) => {
     d.getUTCDate()
   )}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
 };
+
+export const isStrongPassword = (password) => {
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSymbol = /[^A-Za-z0-9]/.test(password); // Any non-alphanumeric character
+
+  return hasUpperCase && hasLowerCase && hasNumber && hasSymbol;
+};

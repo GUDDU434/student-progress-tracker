@@ -24,7 +24,6 @@ const ProgressAnalytics = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const dispatch = useDispatch();
 
-  // const { profile } = useSelector((state) => state.loginReducer);
   const { AllLectures } = useSelector((state) => state.LectureReducer);
   const { AllAssignments } = useSelector((state) => state.AssignmentReducer);
   const { Allswla } = useSelector((state) => state.AnalyticsReducer);
@@ -125,8 +124,8 @@ const ProgressAnalytics = () => {
               }}
             >
               <TableCell sx={{ color: "white" }}>Title</TableCell>
-              <TableCell sx={{ color: "white" }}>Assignment Count</TableCell>
-              <TableCell sx={{ color: "white" }}>Lecture Count</TableCell>
+              <TableCell sx={{ color: "white" }}>Assignment Stats</TableCell>
+              <TableCell sx={{ color: "white" }}>Lecture Stats</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -148,10 +147,14 @@ const ProgressAnalytics = () => {
                     <Typography>{student?.name}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography>{student?.assignmentCount}</Typography>
+                    <Typography>
+                      {(student?.assignmentCount / AllAssignments.total) * 100}%
+                    </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography>{student?.lectureCount}</Typography>
+                    <Typography>
+                      {(student?.lectureCount / AllLectures.total) * 100}%
+                    </Typography>
                   </TableCell>
                 </TableRow>
               ))

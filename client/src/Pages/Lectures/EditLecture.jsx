@@ -1,13 +1,13 @@
 import {
-    Box,
-    Button,
-    CircularProgress,
-    FormLabel,
-    Grid,
-    MenuItem,
-    Select,
-    Stack,
-    TextField
+  Box,
+  Button,
+  CircularProgress,
+  FormLabel,
+  Grid,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IoCloseCircle } from "react-icons/io5";
@@ -16,8 +16,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-    GetAllLectures,
-    GetSinglelecture,
+  GetAllLectures,
+  GetSinglelecture,
 } from "../../Redux/lectures/lecture.action";
 import useAxiosPrivate from "../../utils/useAxiosPrivate";
 
@@ -48,7 +48,13 @@ const EditLecture = ({ toggleDrawer, isDrawerOpen }) => {
 
   useEffect(() => {
     if (!isLoading && isError === null && lectureDetails) {
-      setNewpost(lectureDetails);
+      setNewpost({
+        lacture_title: lectureDetails.lacture_title,
+        lacture_date: lectureDetails.lacture_date,
+        lacture_video_link: lectureDetails.lacture_video_link,
+        lacture_material_link: lectureDetails.lacture_material_link,
+        track: lectureDetails.track,
+      });
     }
   }, [lectureDetails, isError, isLoading]);
 
@@ -70,20 +76,13 @@ const EditLecture = ({ toggleDrawer, isDrawerOpen }) => {
     };
 
     axiosPrivate
-      .post("/api/v1/lectures", formData)
+      .put(`/api/v1/lectures/${id}`, formData)
       .then((res) => {
         toast.success("Data saved successfully!");
 
         // Clear the form fields
-        setNewpost({
-          lacture_title: "",
-          lacture_date: "",
-          lacture_video_link: "",
-          lacture_material_link: "",
-          track: "",
-        });
+        setNewpost({ ...newPost });
         setLoading(false);
-        // toggleDrawer(false);
         dispatch(GetAllLectures());
       })
       .catch((err) => {
@@ -95,13 +94,6 @@ const EditLecture = ({ toggleDrawer, isDrawerOpen }) => {
 
   return (
     <div>
-      {/* <Drawer
-        anchor="left"
-        open={isDrawerOpen}
-        // onClose={toggleDrawer(false)}
-        PaperProps={{ style: { width: "100%", margin: "auto" } }}
-      > */}
-      {/* ------close button---------- */}
       <Box
         sx={{
           display: "flex",
@@ -242,7 +234,6 @@ const EditLecture = ({ toggleDrawer, isDrawerOpen }) => {
           </Button>
         </Stack>
       </Box>
-      {/* </Drawer> */}
       <ToastContainer />
     </div>
   );
