@@ -43,7 +43,6 @@ const Lectures = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchTxt, setSearchTxt] = useState("");
   const [filter, setFilter] = useState({});
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
   const dispatch = useDispatch();
@@ -65,10 +64,6 @@ const Lectures = () => {
     setIsDrawerOpen(open);
   };
 
-  const handleFilterModalOpen = () => {
-    setFilter({});
-    setIsFilterModalOpen(true);
-  };
   const handleFilterModalClose = () => setIsFilterModalOpen(false);
 
   const handleChangePage = (event, newPage) => {
@@ -78,22 +73,6 @@ const Lectures = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleSwitch = (id, e, eventType) => {
-    const data = {};
-    if (eventType === "live") data.is_live = e.target.checked;
-    if (eventType === "admitcard") data.is_admitcard_avl = e.target.checked;
-    if (eventType === "results") data.is_results_avl = e.target.checked;
-
-    dispatch(updateLectures(id, data)).then((res) => {
-      if (res === "SUCCESS") {
-        toast.success("Post updated successfully!");
-        dispatch(GetAllLectures());
-      } else {
-        toast.error("Something went wrong. Please try again later");
-      }
-    });
   };
 
   const handleEdit = (id) => {
@@ -113,10 +92,6 @@ const Lectures = () => {
     });
   };
 
-  const search = () => {
-    dispatch(GetAllLectures({ search: searchTxt, limit: 100 }));
-  };
-
   const handleFilter = (e) => {
     console.log(filter, "filter");
     e.preventDefault();
@@ -133,8 +108,6 @@ const Lectures = () => {
         (student) =>
           student?.student_id === profile._id.toString() && student.attended
       );
-
-      console.log(students, "student");
 
       if (!students) {
         dispatch(
@@ -189,39 +162,6 @@ const Lectures = () => {
               ADD NEW LECTURE
             </Button>
           )}
-
-        {/* Search & Filter */}
-        {/* <Box
-          display="flex"
-          flexDirection={{ xs: "column", sm: "row" }}
-          gap="10px"
-        >
-          <Input
-            placeholder="Search by title"
-            sx={{ borderRadius: 0, mb: { xs: 1, sm: 0 } }}
-            onChange={(e) => setSearchTxt(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                search();
-              }
-            }}
-          />
-          <Button
-            variant="contained"
-            sx={{ borderRadius: 0, mb: { xs: 1, sm: 0 } }}
-            onClick={search}
-          >
-            Search
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{ borderRadius: 0, display: "flex", alignItems: "center" }}
-            onClick={handleFilterModalOpen}
-          >
-            <IoFilter />
-            <Typography>Filter</Typography>
-          </Button>
-        </Box> */}
       </Box>
 
       <TableContainer
@@ -298,21 +238,22 @@ const Lectures = () => {
                         </IconButton>
                       </>
                     ) : (
-                      <Typography
+                      <Button
+                        cursor="pointer"
                         color="primary"
                         onClick={() => handleUpdate(Lecture)}
                         disabled={
                           new Date(Lecture?.lacture_date).getTime() +
-                            24 * 60 * 60 * 1000 <
-                          Date.now()
+                            1 * 60 * 60 * 1000 <
+                          new Date()
                         }
                       >
                         {new Date(Lecture?.lacture_date).getTime() +
-                          6 * 60 * 60 * 1000 <
-                        Date.now()
+                          1 * 60 * 60 * 1000 <
+                        new Date()
                           ? "Watch"
                           : "Join"}
-                      </Typography>
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>
@@ -332,11 +273,14 @@ const Lectures = () => {
       </TableContainer>
 
       {/* Add New Lecture */}
-      <AddLecture
-        isDrawerOpen={isDrawerOpen}
-        toggleDrawer={toggleDrawer}
-        mb={"rem"}
-      />
+
+      {(profile?.role === "admin" || profile?.role === "teacher") && (
+        <AddLecture
+          isDrawerOpen={isDrawerOpen}
+          toggleDrawer={toggleDrawer}
+          mb={"rem"}
+        />
+      )}
 
       {/* Filter Modal */}
       <Modal

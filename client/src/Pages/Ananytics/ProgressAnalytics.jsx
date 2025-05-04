@@ -5,18 +5,44 @@ import {
   CardContent,
   Grid,
   Divider,
+  Table,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TablePagination,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { GetAllswlas } from "../../Redux/analytics/analytics.action";
+import { GetAllLectures } from "../../Redux/lectures/lecture.action";
+import { GetAllAssignments } from "../../Redux/assignment/assignment.action";
 
 const ProgressAnalytics = () => {
-  const { profile } = useSelector((state) => state.loginReducer);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const dispatch = useDispatch();
+
   const { AllLectures } = useSelector((state) => state.LectureReducer);
   const { AllAssignments } = useSelector((state) => state.AssignmentReducer);
+  const { Allswla } = useSelector((state) => state.AnalyticsReducer);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    // window.scrollTo(0, 0);
+    dispatch(GetAllLectures({}));
+    dispatch(GetAllAssignments({}));
+    dispatch(GetAllswlas({}));
+  }, [dispatch]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(() => newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <Box
@@ -81,33 +107,70 @@ const ProgressAnalytics = () => {
       </Typography>
 
       {/* Students List */}
-      <Grid container spacing={2}>
-        {profile?.students?.length > 0 ? (
-          profile.students.map((student, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card
-                sx={{
-                  p: 2,
-                  borderRadius: 2,
-                  boxShadow: 2,
-                  backgroundColor: "#ffffff",
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight="bold">
-                  {student?.name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {student?.email}
-                </Typography>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Typography variant="body1" color="textSecondary">
-            No students available
-          </Typography>
-        )}
-      </Grid>
+      <TableContainer
+        sx={{
+          mt: 2,
+          border: "1px solid gray",
+          overflowX: "auto",
+        }}
+      >
+        <Table fontSize={{ xs: "10px", sm: "12px" }}>
+          <TableHead>
+            <TableRow
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                backgroundColor: "#1976d2",
+              }}
+            >
+              <TableCell sx={{ color: "white" }}>Title</TableCell>
+              <TableCell sx={{ color: "white" }}>Assignment Stats</TableCell>
+              <TableCell sx={{ color: "white" }}>Lecture Stats</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {Allswla?.length === 0 ? (
+              <TableRow sx={{ textAlign: "center" }}>
+                No data available
+              </TableRow>
+            ) : (
+              Allswla?.map((student, i) => (
+                <TableRow
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    backgroundColor: `${i % 2 === 0 ? "#c9d4e7" : "white"}`,
+                  }}
+                  key={student?._id}
+                >
+                  <TableCell>
+                    <Typography>{student?.name}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography>
+                      {(student?.assignmentCount / AllAssignments.total) * 100}%
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography>
+                      {(student?.lectureCount / AllLectures.total) * 100}%
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+          <TablePagination
+            rowsPerPageOptions={[10, 20, 50, 100]}
+            // component="div"
+            count={Allswla?.total || 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Table>
+      </TableContainer>
     </Box>
   );
 };

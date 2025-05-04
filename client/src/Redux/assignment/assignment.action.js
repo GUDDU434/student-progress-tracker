@@ -68,7 +68,7 @@ export const updateAssignments = (id, data) => {
     const token = localStorage.getItem("accessToken");
     try {
       const response = await axiosInstance.put(
-        `/api/v1/assignment/${id}`,
+        `/api/v1/assignments/${id}`,
         data,
         {
           headers: {
@@ -76,8 +76,8 @@ export const updateAssignments = (id, data) => {
           },
         }
       );
-      if (response?.data?.status === 201) {
-        // console.log("Updated Successfully");
+      if (response?.status === 200) {
+        dispatch(GetAllAssignments());
         return "SUCCESS";
       } else {
         dispatch(assignmentFailure(response?.data.message));

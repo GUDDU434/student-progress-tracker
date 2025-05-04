@@ -5,6 +5,7 @@ module.exports.GetAssignmentById = async (req, res) => {
   try {
     const assignment = await Assignment.findById(req.params.id)
       .populate("posted_by", "name")
+      .populate("submitted_by.student_id", "name")
       .lean();
     if (!assignment) {
       return res.status(404).send({ message: "Assignment not found" });

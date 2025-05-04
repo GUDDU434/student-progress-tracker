@@ -9,13 +9,16 @@ import {
   Alert,
 } from "@mui/material";
 import { axiosInstance } from "../../utils/axiosInstance";
+import { useSelector } from "react-redux";
+import { isStrongPassword } from "../../utils/common_func";
 const Register = () => {
-  let currentUserRole = localStorage.getItem("role");
+  const { profile } = useSelector((state) => state.loginReducer);
   const initialFormState = {
     password: "",
     email: "",
     name: "",
     role: "",
+    track: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -31,8 +34,24 @@ const Register = () => {
     e.preventDefault();
 
     // Check if current user is admin
-    if (currentUserRole !== "admin") {
+    if (profile.role !== "admin") {
       setToastMessage("Only admin can create new users.");
+      setToastSeverity("error");
+      setOpenToast(true);
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setToastMessage("Password should be at least 8 characters long.");
+      setToastSeverity("error");
+      setOpenToast(true);
+      return;
+    }
+
+    if (!isStrongPassword(formData.password)) {
+      setToastMessage(
+        "Password should have at least one uppercase letter, one lowercase letter, one number, and one special character."
+      );
       setToastSeverity("error");
       setOpenToast(true);
       return;
@@ -42,12 +61,16 @@ const Register = () => {
 
     try {
       // API call using axiosInstance
-      const response = await axiosInstance.post(`/api/v1/users`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Pass token in the headers
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axiosInstance.post(
+        `/api/v1/users/registration`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass token in the headers
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.data.status === 201) {
         setToastMessage("User registered successfully!");
@@ -147,7 +170,7 @@ const Register = () => {
               <TextField
                 fullWidth
                 required
-                name="Track"
+                name="track"
                 value={formData.track}
                 onChange={handleChange}
                 select

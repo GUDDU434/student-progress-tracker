@@ -23,6 +23,13 @@ const LectureDetails = () => {
     dispatch(GetSinglelecture(id));
   }, [dispatch, id]);
 
+  console.log(
+    new Date(lectureDetails?.lacture_date).getTime() + 1 * 60 * 60 * 1000 <
+      new Date(),
+    new Date(lectureDetails?.lacture_date).getTime() + 6 * 24 * 60 * 60 * 1000,
+    new Date().getTime()
+  );
+
   return (
     <Box
       sx={{
@@ -65,7 +72,11 @@ const LectureDetails = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Watch Video
+                {new Date(lectureDetails?.lacture_date).getTime() +
+                  1 * 60 * 60 * 1000 <
+                new Date()
+                  ? "Watch Video"
+                  : "Join"}
               </a>
             </Typography>
 
@@ -88,7 +99,7 @@ const LectureDetails = () => {
               lectureDetails?.students?.length > 0 && (
                 <Box mt={4}>
                   <Typography variant="h6" mb={2}>
-                    Students:
+                    Students: ({lectureDetails?.students?.length})
                   </Typography>
                   {lectureDetails.students.map((student, index) => (
                     <Box
@@ -102,10 +113,10 @@ const LectureDetails = () => {
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight="bold">
-                        {student?.name}
+                        {index + 1}. {student?.student_id?.name}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        {student?.email}
+                        {student?.student_id?.email}
                       </Typography>
                     </Box>
                   ))}

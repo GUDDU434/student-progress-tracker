@@ -40,7 +40,7 @@ module.exports.GetSingleLecture = async (req, res) => {
   try {
     const lecture = await Lecture.findById(req.params.id)
       .populate("instructor", "name")
-      .populate("students", "name")
+      .populate("students.student_id", "name email")
       .lean();
     if (!lecture) {
       return res.status(404).send({ message: "Lecture not found" });

@@ -5,23 +5,30 @@ const bcrypt = require("bcrypt");
 
 module.exports.RegisterUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, track } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    const user = new User({ name, email, password: hashedPassword, role });
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      track,
+    });
     await user.save();
     res.send({ message: "User registered successfully" });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send({ message: err.message });
   }
 };
+
 module.exports.LoginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
@@ -56,7 +63,7 @@ module.exports.LoginUser = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send({ message: err.message });
   }
 };
@@ -97,13 +104,11 @@ module.exports.GetDetails = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
-    res
-      .status(200)
-      .send({
-        data: user,
-        status: 200,
-        message: "User details fetched successfully",
-      });
+    res.status(200).send({
+      data: user,
+      status: 200,
+      message: "User details fetched successfully",
+    });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

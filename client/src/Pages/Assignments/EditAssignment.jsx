@@ -46,7 +46,13 @@ const EditAssignment = ({ toggleDrawer, isDrawerOpen }) => {
 
   useEffect(() => {
     if (!isLoading && isError === null && assignmentDetails) {
-      setNewpost(assignmentDetails);
+      setNewpost({
+        title: assignmentDetails.title,
+        description: assignmentDetails.description,
+        due_date: assignmentDetails.due_date,
+        track: assignmentDetails.track,
+        submission_link: assignmentDetails.submission_link,
+      });
     }
   }, [assignmentDetails, isError, isLoading]);
 

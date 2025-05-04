@@ -27,9 +27,7 @@ const assignmentSchema = new mongoose.Schema(
       enum: ["mern", "java", "da", "ds"],
       required: true,
     },
-    submission_link: {
-      type: String,
-    },
+
     status: {
       type: String,
       enum: ["new", "in_progress", "closed", "overdue"],
@@ -37,8 +35,14 @@ const assignmentSchema = new mongoose.Schema(
     },
     submitted_by: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        student_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        submission_link: {
+          type: String,
+        },
       },
     ],
   },

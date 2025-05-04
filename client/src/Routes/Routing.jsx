@@ -15,11 +15,15 @@ import Register from "../Pages/auth/Register";
 import EditLecture from "../Pages/Lectures/EditLecture";
 import LectureDetails from "../Pages/Lectures/LectureDetails";
 import ProgressAnalytics from "../Pages/Ananytics/ProgressAnalytics";
+import AssignmentDetails from "../Pages/Assignments/AssignmentDetails";
+import RoleBasedRoute from "./RoleBasedRoute";
+import { useSelector } from "react-redux";
 
 const Routing = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const navigation = useNavigate();
+  const { profile } = useSelector((state) => state.loginReducer);
 
   const [isAuth, setIsAuth] = useState(false);
 
@@ -36,6 +40,8 @@ const Routing = () => {
 
     if (!isAuthenticated && !localStorage.getItem("accessToken")) {
       navigation("/login");
+    } else {
+      // navigation("/");
     }
   }, [navigation, isAuth, isAuthenticated]);
 
@@ -49,24 +55,79 @@ const Routing = () => {
             <Box>
               <Routes>
                 <Route element={<ProtectedRoute isAuthenticated={isAuth} />}>
-                  <Route path="/lactures" element={<Dashboard />} />
+                  {/* Lectures Routes */}
                   <Route path="/" element={<Dashboard />} />
-                  <Route path="/assignments" element={<Assignment />} />
+                  <Route path="/lectures" element={<Dashboard />} />
                   <Route
-                    path="/assignments/edit/:id"
-                    element={<EditAssignment />}
+                    path="/lectures/edit/:id"
+                    element={
+                      <RoleBasedRoute
+                        isAuthenticated={isAuth}
+                        allowedRoles={["admin", "teacher"]}
+                        userRole={profile?.role}
+                      >
+                        <EditLecture />
+                      </RoleBasedRoute>
+                    }
                   />
-                  <Route
-                    path="/progress/analytics"
-                    element={<ProgressAnalytics />}
-                  />
-                  <Route path="/lectures/edit/:id" element={<EditLecture />} />
                   <Route
                     path="/lectures/details/:id"
                     element={<LectureDetails />}
                   />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="*" element={() => <h1>404 Page Not Found</h1>} />
+
+                  {/* Assignments Routes */}
+                  <Route path="/assignments" element={<Assignment />} />
+                  <Route
+                    path="/assignments/edit/:id"
+                    element={
+                      <RoleBasedRoute
+                        isAuthenticated={isAuth}
+                        allowedRoles={["admin", "teacher"]}
+                        userRole={profile?.role}
+                      >
+                        <EditAssignment />
+                      </RoleBasedRoute>
+                    }
+                  />
+                  <Route
+                    path="/assignments/details/:id"
+                    element={<AssignmentDetails />}
+                  />
+
+                  {/* Analytics Routes */}
+                  <Route
+                    path="/progress/analytics"
+                    element={
+                      <RoleBasedRoute
+                        isAuthenticated={isAuth}
+                        allowedRoles={["admin", "teacher"]}
+                        userRole={profile?.role}
+                      >
+                        <ProgressAnalytics />
+                      </RoleBasedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/register"
+                    element={
+                      <RoleBasedRoute
+                        isAuthenticated={isAuth}
+                        allowedRoles={["admin", "teacher"]}
+                        userRole={profile?.role}
+                      >
+                        <Register />
+                      </RoleBasedRoute>
+                    }
+                  />
+                  <Route
+                    path="*"
+                    element={() => (
+                      <h1 style={{ textAlign: "center", marginTop: "200px" }}>
+                        404 Page Not Found
+                      </h1>
+                    )}
+                  />
                 </Route>
               </Routes>
             </Box>
