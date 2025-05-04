@@ -10,7 +10,7 @@ const { authorization } = require("../middleware/authorize_middleware");
 const authRouter = express.Router();
 
 authRouter.post("/login", LoginUser);
-authRouter.post("/registration", authenticate, authorization, RegisterUser);
+authRouter.post("/registration", RegisterUser);
 authRouter.get("/logout", authenticate, LogoutUser);
 authRouter.get("/details/token", authenticate, authorization, GetDetails);
 
