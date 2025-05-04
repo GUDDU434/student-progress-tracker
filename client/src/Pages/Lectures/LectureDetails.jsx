@@ -23,6 +23,13 @@ const LectureDetails = () => {
     dispatch(GetSinglelecture(id));
   }, [dispatch, id]);
 
+  console.log(
+    new Date(lectureDetails?.lacture_date).getTime() + 1 * 60 * 60 * 1000 <
+      new Date(),
+    new Date(lectureDetails?.lacture_date).getTime() + 6 * 24 * 60 * 60 * 1000,
+    new Date().getTime()
+  );
+
   return (
     <Box
       sx={{

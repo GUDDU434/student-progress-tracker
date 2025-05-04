@@ -21,6 +21,7 @@ import {
 } from "../../Redux/auth/auth.action";
 // import { contactUsGetData } from "../../Redux/contactus/contact.action";
 import { userRole } from "../../utils/constants";
+import { useNavigate } from "react-router-dom";
 const getRandomColor = () => {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -34,13 +35,19 @@ const Navbar = ({ onOpen }) => {
   const { user } = useContext(AuthContext);
   const [userModal, setUserModal] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState();
   const [editable, setEditable] = useState(false);
   const { profile } = useSelector((state) => state.loginReducer);
-  
+
   useEffect(() => {
-    dispatch(getUserDetails());
-  }, [dispatch]);
+    dispatch(getUserDetails()).then((res) => {
+      if (res === "FAILURE") {
+        localStorage.clear();
+        navigate("/login");
+      }
+    });
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     setUserDetails(profile);

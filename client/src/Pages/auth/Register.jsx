@@ -9,13 +9,16 @@ import {
   Alert,
 } from "@mui/material";
 import { axiosInstance } from "../../utils/axiosInstance";
+import { useSelector } from "react-redux";
 const Register = () => {
+  const { profile } = useSelector((state) => state.loginReducer);
   let currentUserRole = localStorage.getItem("role");
   const initialFormState = {
     password: "",
     email: "",
     name: "",
     role: "",
+    track: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -31,7 +34,7 @@ const Register = () => {
     e.preventDefault();
 
     // Check if current user is admin
-    if (currentUserRole !== "admin") {
+    if (profile.role !== "admin") {
       setToastMessage("Only admin can create new users.");
       setToastSeverity("error");
       setOpenToast(true);
@@ -42,12 +45,16 @@ const Register = () => {
 
     try {
       // API call using axiosInstance
-      const response = await axiosInstance.post(`/api/v1/users`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Pass token in the headers
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axiosInstance.post(
+        `/api/v1/users/registration`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass token in the headers
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.data.status === 201) {
         setToastMessage("User registered successfully!");
@@ -147,7 +154,7 @@ const Register = () => {
               <TextField
                 fullWidth
                 required
-                name="Track"
+                name="track"
                 value={formData.track}
                 onChange={handleChange}
                 select

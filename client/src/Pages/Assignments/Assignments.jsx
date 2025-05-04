@@ -10,7 +10,6 @@ import {
   MenuItem,
   Modal,
   Select,
-  Switch,
   Table,
   TableBody,
   TableCell,
@@ -21,20 +20,20 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { CiEdit } from "react-icons/ci";
+import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { GetAllAssignments } from "../../Redux/assignment/assignment.action";
 import {
   deletelecture,
   GetAllLectures,
-  updateLectures,
 } from "../../Redux/lectures/lecture.action";
 import { formatDate } from "../../utils/common_func";
 import AddAssignment from "./AddAssignment";
-import { GetAllAssignments } from "../../Redux/assignment/assignment.action";
-import { FaCalendarAlt, FaUser } from "react-icons/fa";
 
 const Assignments = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -73,22 +72,6 @@ const Assignments = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleSwitch = (id, e, eventType) => {
-    const data = {};
-    if (eventType === "live") data.is_live = e.target.checked;
-    if (eventType === "admitcard") data.is_admitcard_avl = e.target.checked;
-    if (eventType === "results") data.is_results_avl = e.target.checked;
-
-    dispatch(updateLectures(id, data)).then((res) => {
-      if (res === "SUCCESS") {
-        toast.success("Post updated successfully!");
-        dispatch(GetAllLectures());
-      } else {
-        toast.error("Something went wrong. Please try again later");
-      }
-    });
   };
 
   const handleEdit = (id) => {
@@ -212,13 +195,12 @@ const Assignments = () => {
                     {profile?.role === "admin" ||
                     profile?.role === "teacher" ? (
                       <>
-                        <Switch
-                          defaultChecked={assignment?.is_live}
-                          color="success"
-                          onChange={(e) =>
-                            handleSwitch(assignment?._id, e, "live")
-                          }
-                        />
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleEdit(assignment._id)}
+                        >
+                          <CiEdit />
+                        </IconButton>
                         <IconButton
                           color="error"
                           onClick={() => {
@@ -231,7 +213,9 @@ const Assignments = () => {
                       </>
                     ) : (
                       <Typography color="primary">
-                        {assignment?.submitted_by?.includes(profile?._id)
+                        {assignment?.submitted_by?.find(
+                          (student) => student?.student_id === profile._id
+                        )
                           ? "Completed"
                           : "New"}
                       </Typography>

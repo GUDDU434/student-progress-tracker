@@ -30,7 +30,7 @@ const authenticate = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log("catch Error", error);
+    // console.log("catch Error", error);
     res.status(401).json({ message: "Unauthenticated" });
   }
 };

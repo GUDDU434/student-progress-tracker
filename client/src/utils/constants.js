@@ -90,7 +90,7 @@ export const initaialImpLinks = [
     type: "URL",
   },
 ];
-export const userRole = ["admin", "financial", "operational"];
+export const userRole = ["admin", "student", "teacher"];
 export const empty = "<p><br></p>";
 
 export const initialInputData = {

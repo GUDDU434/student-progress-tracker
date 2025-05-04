@@ -16,7 +16,20 @@ module.exports.GetUserList = async (req, res) => {
           pipeline: [
             {
               $match: {
-                $expr: { $in: ["$$userId", "$submitted_by"] },
+                $expr: {
+                  $gt: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$submitted_by",
+                          as: "student",
+                          cond: { $eq: ["$$student.student_id", "$$userId"] },
+                        },
+                      },
+                    },
+                    0,
+                  ],
+                },
               },
             },
             {

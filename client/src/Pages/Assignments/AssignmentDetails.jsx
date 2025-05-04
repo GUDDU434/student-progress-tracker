@@ -1,23 +1,23 @@
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Input,
+  Typography,
+} from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { GetSinglelecture } from "../../Redux/lectures/lecture.action";
 import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  CircularProgress,
-  Input,
-  Button,
-} from "@mui/material";
-import {
-  GetAllAssignments,
   GetSingleassignment,
+  updateAssignments,
 } from "../../Redux/assignment/assignment.action";
 import { formatDate } from "../../utils/common_func";
 
 const AssignmentDetails = () => {
+  const [submissionLink, setSubmissionLink] = React.useState("");
   const { id } = useParams();
   const dispatch = useDispatch();
   const { assignmentDetails, isLoading, isError } = useSelector(
@@ -29,6 +29,36 @@ const AssignmentDetails = () => {
   useEffect(() => {
     dispatch(GetSingleassignment(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (assignmentDetails) {
+      let students = assignmentDetails?.submitted_by?.find(
+        (student) => student?.student_id === profile._id
+      );
+
+      setSubmissionLink(students?.submission_link || "");
+    }
+  }, [assignmentDetails, profile._id]);
+
+  const submitAssignment = () => {
+    let students = assignmentDetails?.submitted_by?.find(
+      (student) => student?.student_id === profile._id.toString()
+    );
+
+    if (!students) {
+      dispatch(
+        updateAssignments(id, {
+          submitted_by: [
+            ...assignmentDetails.submitted_by,
+            {
+              student_id: profile._id,
+              submission_link: submissionLink,
+            },
+          ],
+        })
+      );
+    }
+  };
 
   return (
     <Box
@@ -69,7 +99,7 @@ const AssignmentDetails = () => {
               </Typography>
             </Typography>
 
-            <Typography variant="body1" color="textSecondary" mb={1}>
+            <Typography variant="body2" color="textSecondary" mb={1}>
               Start: {formatDate(assignmentDetails?.start_date, false)} | Due
               Date:
               {formatDate(assignmentDetails?.due_date, false)}
@@ -80,16 +110,16 @@ const AssignmentDetails = () => {
             </Typography>
 
             <Typography variant="body1" color="textSecondary" mb={1}>
-              {assignmentDetails?.description}
+              Description: {assignmentDetails?.description}
             </Typography>
 
-            {profile?.role !== "Student" &&
-              assignmentDetails?.students?.length > 0 && (
+            {profile?.role !== "student" &&
+              assignmentDetails?.submitted_by?.length > 0 && (
                 <Box mt={4}>
                   <Typography variant="h6" mb={2}>
                     Students:
                   </Typography>
-                  {assignmentDetails.students.map((student, index) => (
+                  {assignmentDetails.submitted_by?.map((student, index) => (
                     <Box
                       key={index}
                       sx={{
@@ -101,29 +131,44 @@ const AssignmentDetails = () => {
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight="bold">
-                        {student?.name}
+                        {index + 1} {student?.student_id?.name}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        {student?.email}
+                        {student?.submission_link}
                       </Typography>
                     </Box>
                   ))}
                 </Box>
               )}
-
-            <Box mt={4}>
-              <Typography variant="h6" mb={2}>
-                Submission Link:
-              </Typography>
-              <Input
-                placeholder="Enter Submission Link"
-                value={assignmentDetails?.submission_link}
-                fullWidth
-              />
-              <Button variant="contained" color="primary" fullWidth mt={2}>
-                Submit
-              </Button>
-            </Box>
+            {profile?.role === "student" && (
+              <Box mt={4}>
+                <Typography variant="h6" mb={2}>
+                  Submission Link:
+                </Typography>
+                <Input
+                  placeholder="Enter Submission Link"
+                  value={submissionLink}
+                  fullWidth
+                  onChange={(e) => {
+                    setSubmissionLink(e.target.value);
+                  }}
+                  disabled={new Date(assignmentDetails?.due_date) < new Date()}
+                />
+                {new Date(assignmentDetails?.due_date) > new Date() && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    onClick={() => {
+                      submitAssignment(id, submissionLink);
+                    }}
+                  >
+                    Submit
+                  </Button>
+                )}
+              </Box>
+            )}
           </CardContent>
         </Card>
       )}
